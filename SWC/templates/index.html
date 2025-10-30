@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScrapeNChat</title>
+    <link rel="stylesheet" href="static\styles.css">
+</head>
+
+<body>
+
+
+    <div class="sidebar">
+        <div class="logo-box">
+            <img src="static\Screenshot 2024-10-13 141346.png" alt="Logo">
+        </div>
+        <div class="description">
+            <p>Scrape<span style="font-size:xx-large; font-weight:900;">𝒩</span>Chat is a web application that combines
+                a powerful web scraper and an AI chatbot for seamless data extraction
+                and interaction. Users can scrape content from both static and dynamic websites, the chatbot responds to
+                user queries, leveraging the scraped data to provide relevant answers. The project features an elegant
+                UI inspired by the logo's gold-to-bronze gradient. Built using Python (Flask), BeautifulSoup, Selenium,
+                and a Gemini-based AI model.</p>
+        </div>
+    </div>
+
+
+    <div class="main-content">
+        <div class="title">
+            <h1>AI WEB SCRAPER</h1>
+        </div>
+
+        <div id="container">
+            <div id="scraper-container">
+                <div class="web-header">
+                    <h2>Web Scraper</h2>
+                </div>
+                <div id="url-container">
+                    <input type="text" id="url-input" placeholder="Website URL">
+                    <button id="scrape-btn">Scrape</button>
+                    <button id="train-btn">Train</button>
+                </div>
+                <div id="scrape-results"></div>
+                <div id="loading-spinner" class="spinner"></div>
+            </div>
+
+            <div id="chat-container">
+                <div class="chat-header">
+                    <h2>Chatbot</h2>
+                </div>
+                <div id="chat-box">
+                    <div id="message" class="bot-message message">Hello! How May I Help You? Feel Free To Ask Questions
+                    </div>
+                </div>
+                <div id="input-container">
+                    <input type="text" id="user-input" placeholder="Type your message...">
+                    <button id="send-btn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    document.getElementById("send-btn").addEventListener("click", function () {
+        let userMessage = document.getElementById("user-input").value;
+        let chatBox = document.getElementById("chat-box");
+        let userMsgDiv = document.createElement("div");
+        userMsgDiv.textContent = userMessage;
+        userMsgDiv.classList.add("message", "user-message");
+        chatBox.appendChild(userMsgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userMessage })
+        })
+            .then(response => response.json())
+            .then(data => {
+                let botResponseDiv = document.createElement("div");
+                botResponseDiv.textContent = data.response;
+                botResponseDiv.classList.add("message", "bot-message");
+                chatBox.appendChild(botResponseDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+
+        document.getElementById("user-input").value = "";
+    });
+
+    document.getElementById("user-input").addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            document.getElementById("send-btn").click();
+        }
+    });
+
+    // Scraper logic
+    document.getElementById("scrape-btn").addEventListener("click", function () {
+        let url = document.getElementById("url-input").value;
+
+        fetch('/scrape', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: url })
+        })
+            .then(response => response.json())
+            .then(data => {
+                let resultDiv = document.getElementById("scrape-results");
+                resultDiv.textContent = data.content;
+            });
+    });
+
+    document.getElementById('train-btn').addEventListener('click', function () {
+        var message = document.getElementById('message');
+        message.style.display = 'block';
+    });
+    document.getElementById('scrape-btn').addEventListener('click', function () {
+        const url = document.getElementById('url-input').value;
+        if (!url) {
+            alert('Please enter a valid URL');
+            return;
+        }
+
+        // Show the loading spinner
+        document.getElementById('loading-spinner').style.display = 'block';
+
+        // Send scraping request to the server
+        fetch('/scrape', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ url: url }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Hide the loading spinner
+                document.getElementById('loading-spinner').style.display = 'none';
+
+                // Display the scraped data
+                document.getElementById('scrape-results').textContent = data.content;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Hide the loading spinner in case of error
+                document.getElementById('loading-spinner').style.display = 'none';
+            });
+    });
+
+</script>
+</body>
+
+</html>

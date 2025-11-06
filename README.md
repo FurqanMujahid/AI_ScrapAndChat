@@ -244,14 +244,6 @@ The application doesn't train a model on the scraped data. Instead, it uses Goog
 
 This project is open source and available for educational purposes.
 
-## 👤 Author
-
-Your Name/Organization
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-
 ---
 
 **Note**: This application is for educational and personal use. Always ensure you have permission to scrape websites and comply with their terms of service.

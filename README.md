@@ -126,7 +126,7 @@ pip install google-generativeai
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/AI_ScrapAndChat.git
+git clone https://github.com/FurqanMujahid/AI_ScrapAndChat.git
 cd AI_ScrapAndChat
 ```
 
